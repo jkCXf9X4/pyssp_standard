@@ -27,6 +27,7 @@ class Fmi2DefaultExperiment:
     start_time: float | None = None
     stop_time: float | None = None
     tolerance: float | None = None
+    step_size: float | None = None
 
 
 @dataclass

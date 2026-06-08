@@ -100,6 +100,7 @@ class Fmi2ModelDescriptionXmlCodec:
             self._set_optional(default_experiment.attrib, "startTime", self._format_float(document.default_experiment.start_time))
             self._set_optional(default_experiment.attrib, "stopTime", self._format_float(document.default_experiment.stop_time))
             self._set_optional(default_experiment.attrib, "tolerance", self._format_float(document.default_experiment.tolerance))
+            self._set_optional(default_experiment.attrib, "stepSize", self._format_float(document.default_experiment.step_size))
 
         model_variables = ET.SubElement(root, "ModelVariables")
         for variable in document.variables:
@@ -233,6 +234,7 @@ class Fmi2ModelDescriptionXmlCodec:
             start_time=self._parse_float(element.attrib.get("startTime")),
             stop_time=self._parse_float(element.attrib.get("stopTime")),
             tolerance=self._parse_float(element.attrib.get("tolerance")),
+            step_size=self._parse_float(element.attrib.get("stepSize")),
         )
 
     def _parse_variables(self, model_variables: ET.Element | None) -> list[Fmi2ScalarVariable]:

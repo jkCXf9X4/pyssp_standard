@@ -1,0 +1,1 @@
+"""Tests for SSP1 standard support."""
