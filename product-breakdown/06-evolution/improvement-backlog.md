@@ -8,7 +8,7 @@
 > full guarded workflow (planner → discovery → contract → architecture →
 > lessons → packet → builder → verifier → review → gate → reporter).
 >
-> **Last updated:** 2026-06-08 (added IMP-020, IMP-021, IMP-022 — FMI2 model improvements + deterministic ZIP)
+> **Last updated:** 2026-06-08 (IMP-020/021/022 marked done per ALIGN-001; added IMP-023–IMP-027 candidates)
 
 ---
 
@@ -16,10 +16,10 @@
 
 | Priority | Open | In Progress | Done | Total |
 |----------|------|-------------|------|-------|
-| High     | 3    | 0           | 5    | 8     |
-| Medium   | 3    | 0           | 3    | 6     |
-| Low      | 3    | 0           | 5    | 8     |
-| **Total**| **9** | **0**       | **13**| **22**|
+| High     | 2    | 0           | 6    | 8     |
+| Medium   | 2    | 0           | 4    | 6     |
+| Low      | 2    | 0           | 6    | 8     |
+| **Total**| **6** | **0**       | **16**| **22**|
 
 ---
 
@@ -46,9 +46,9 @@
 | IMP-017 | Automated standard version identification in XmlDocument | Medium | Public API / Versioning | proposed |
 | IMP-018 | Bulk FMU import from directory via add_fmu_directory() | Low | Public API | proposed |
 | IMP-019 | Lifecycle-safe FMU iteration over SSP components | Medium | Operations / Public API | proposed |
-| IMP-020 | FMI2 model field type corrections (value_reference, start, unit, ModelStructure) | High | Domain Model / Codec (FMI2) | proposed |
-| IMP-021 | FMI2 model metadata completeness (description, author, version, typed capabilities) | Medium | Domain Model / Codec (FMI2) | proposed |
-| IMP-022 | Deterministic ZIP timestamps for reproducible archive builds | Low | Archive | proposed |
+| IMP-020 | FMI2 model field type corrections (value_reference, start, unit, ModelStructure) | High | Domain Model / Codec (FMI2) | done |
+| IMP-021 | FMI2 model metadata completeness (description, author, version, typed capabilities) | Medium | Domain Model / Codec (FMI2) | done |
+| IMP-022 | Deterministic ZIP timestamps for reproducible archive builds | Low | Archive | done |
 
 ---
 
