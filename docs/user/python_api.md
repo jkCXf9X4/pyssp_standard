@@ -117,6 +117,8 @@ When you open `SystemStructure.ssd` through `SSP`, external parameter bindings a
 
 Use `FMU` for `.fmu` archives or unpacked FMU directories.
 
+### Reading an FMU
+
 ```python
 from pyssp_standard import FMU
 
@@ -126,6 +128,20 @@ with FMU("component.fmu", mode="r") as fmu:
     with fmu.model_description as md:
         print(md.xml.model_name)
         print(len(md.xml.inputs))
+```
+
+### Creating an FMU from scratch
+
+```python
+from pathlib import Path
+from pyssp_standard import FMU
+
+binary = Path("my_controller.so")
+binary.write_text("(shared library)")
+
+with FMU("controller.fmu", mode="w") as fmu:
+    fmu.add_binary(binary, platform="linux64")
+    fmu.add_resource(Path("config.json"))
 ```
 
 ## ModelDescription

@@ -31,6 +31,43 @@ class FMU:
     def documentation(self) -> list[str]:
         return self.runtime.list_prefix("documentation/")
 
+    def add_model_description(self, source: str | Path) -> str:
+        source_path = Path(source)
+        if not source_path.exists():
+            raise FileNotFoundError(f"modelDescription file not found: {source_path}")
+        return self.runtime.add_file(source_path, target_name="modelDescription.xml")
+
+    @classmethod
+    def create(
+        cls,
+        path: str | Path,
+        model_description: str | Path,
+        binaries: dict[str, str | Path] | None = None,
+        resources: list[str | Path] | None = None,
+    ) -> Path:
+        path = Path(path)
+        with cls(path, mode="w") as fmu:
+            fmu.add_model_description(model_description)
+            for platform, binary in (binaries or {}).items():
+                fmu.add_binary(binary, platform=platform)
+            for resource in (resources or []):
+                fmu.add_resource(resource)
+        return path
+
+    def add_binary(self, source: str | Path, *, platform: str | None = None) -> str:
+        source_path = Path(source)
+        if platform:
+            target_path = f"binaries/{platform}/{source_path.name}"
+        else:
+            target_path = f"binaries/{source_path.name}"
+        return self.runtime.add_file(source_path, target_name=target_path)
+
+    def add_resource(self, source: str | Path, *, target_name: str | None = None) -> str:
+        source_path = Path(source)
+        name = target_name or source_path.name
+        target_path = f"resources/{name}"
+        return self.runtime.add_file(source_path, target_name=target_path)
+
     @property
     def model_description(self) -> ModelDescription:
         return ModelDescription(self.runtime.root / "modelDescription.xml", mode=self.mode)
