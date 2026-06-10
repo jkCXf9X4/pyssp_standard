@@ -4,13 +4,11 @@ from collections.abc import Iterable
 from pathlib import Path
 
 from pyssp_standard.common.xml_document import XmlDocument
-from pyssp_standard.standard.ls_ref.codec import LSRefExperimentsCodec, LSRefManifestCodec
 from pyssp_standard.standard.ls_ref.model import (
     LSRefExperiment,
     LSRefExperimentsDocument,
     LSRefManifestDocument,
 )
-from pyssp_standard.standard.ls_ref.validation import LSRefExperimentsValidator, LSRefManifestValidator
 
 LS_REF_EXTRA_DIR = "extra/org.fmi-standard.fmi-ls-ref"
 
@@ -19,8 +17,7 @@ class LSRefManifest(XmlDocument[LSRefManifestDocument]):
 
     def __init__(self, path: str | Path, mode: str = "r"):
         super().__init__(path, mode)
-        self._codec = LSRefManifestCodec()
-        self._validator = LSRefManifestValidator()
+        self._codec, self._validator = self.get_codec_and_validator("FMI", "LS-REF-MANIFEST", version="1.0.0-alpha.1")
 
     def _create_document(self) -> LSRefManifestDocument:
         return LSRefManifestDocument()
@@ -31,8 +28,7 @@ class LSRefExperiments(XmlDocument[LSRefExperimentsDocument]):
 
     def __init__(self, path: str | Path, mode: str = "r"):
         super().__init__(path, mode)
-        self._codec = LSRefExperimentsCodec()
-        self._validator = LSRefExperimentsValidator()
+        self._codec, self._validator = self.get_codec_and_validator("FMI", "LS-REF-EXPERIMENTS", version="1.0.0-alpha.1")
 
     def _create_document(self) -> LSRefExperimentsDocument:
         return LSRefExperimentsDocument(name=self.path.stem or "experiments")

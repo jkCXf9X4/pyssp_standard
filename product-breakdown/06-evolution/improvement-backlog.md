@@ -12,9 +12,9 @@
 | Priority | Open | In Progress | Done | Total |
 |----------|------|-------------|------|-------|
 | High     | 2    | 0           | 6    | 8     |
-| Medium   | 2    | 0           | 5    | 7     |
+| Medium   | 3    | 0           | 5    | 8     |
 | Low      | 2    | 0           | 6    | 8     |
-| **Total**| **6** | **0**       | **17**| **23**|
+| **Total**| **7** | **0**       | **17**| **24**|
 
 ---
 
@@ -45,6 +45,7 @@
 | IMP-021 | FMI2 model metadata completeness (description, author, version, typed capabilities) | Medium | Domain Model / Codec (FMI2) | done |
 | IMP-022 | Deterministic ZIP timestamps for reproducible archive builds | Low | Archive | done |
 | IMP-028 | Formalize Reproducibility as a Non-Functional Requirement (NFR-001 / QA-001) | Medium | Archive (core), Quality Attributes (cross-cutting) | done |
+| IMP-029 | Common layer structural review — Runtime, Archive, XML, Reference handling | Medium | Common | proposed |
 
 ---
 

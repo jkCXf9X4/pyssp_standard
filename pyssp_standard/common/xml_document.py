@@ -36,18 +36,23 @@ class XmlDocument(Generic[DocumentT]):
             self.save_document()
         return False
 
-    def get_codec_and_validator(self, family, format):
-        if self.mode != "w":
+    def get_codec_and_validator(self, family: str, format: str, version: str | None = None):
+        if version is not None:
+            self._version = version
+        elif self.mode != "w":
             try:
                 sv = get_standard_version_from_file(self.path)
                 self._version = sv.version
             except FileNotFoundError:
                 pass
 
-        # Dispatch codec and validator
         codec_type, validator_type = get_codec_and_validator(
             StandardVersion(family=family, format=format, version=self._version)
         )
+        if codec_type is None or validator_type is None:
+            raise ValueError(
+                f"No codec/validator registered for {family}/{format} version '{self._version}'"
+            )
         return codec_type(), validator_type()
 
     @property

@@ -1,22 +1,49 @@
 from __future__ import annotations
 
-from dataclasses import is_dataclass
+import inspect
+import logging
+from dataclasses import dataclass, is_dataclass
 from pathlib import Path
 from typing import Any, Generic, TypeVar
+from xml.etree.ElementTree import ParseError
 
 from pyssp_standard.common.archive_runtime import DirectoryRuntime
 from pyssp_standard.common.reference_discovery import discover_external_references
 
 
+logger = logging.getLogger(__name__)
+
+
 FacadeT = TypeVar("FacadeT")
 
 
+@dataclass(frozen=True)
 class ExternalReferenceSpec:
-    def __init__(self, owner_type: type[Any], source_attr: str, document_attr: str, facade_type: type[Any]):
-        self.owner_type = owner_type
-        self.source_attr = source_attr
-        self.document_attr = document_attr
-        self.facade_type = facade_type
+    """Specification for resolving an external document reference.
+
+    Validates that *owner_type* has both *source_attr* and *document_attr*,
+    and that *facade_type* is a context-managed class.
+    """
+    owner_type: type
+    source_attr: str
+    document_attr: str
+    facade_type: type
+
+    def __post_init__(self) -> None:
+        if not inspect.isclass(self.owner_type):
+            raise TypeError(f"owner_type must be a class, got {type(self.owner_type).__name__}")
+        if not hasattr(self.owner_type, self.source_attr):
+            raise AttributeError(
+                f"{self.owner_type.__name__} has no attribute '{self.source_attr}' (source_attr)"
+            )
+        if not hasattr(self.owner_type, self.document_attr):
+            raise AttributeError(
+                f"{self.owner_type.__name__} has no attribute '{self.document_attr}' (document_attr)"
+            )
+        if not hasattr(self.facade_type, '__enter__'):
+            raise TypeError(
+                f"facade_type must be a context-managed class, got {self.facade_type}"
+            )
 
 
 class _ResolvedExternalDocument:
@@ -115,7 +142,8 @@ class DocumentRuntime(Generic[FacadeT]):
         try:
             with spec.facade_type(path, mode="r") as facade:
                 resolved = _ResolvedExternalDocument(spec=spec, path=path, document=facade.xml)
-        except Exception:
+        except (ValueError, OSError, ParseError, AttributeError, TypeError) as exc:
+            logger.warning("Failed to load external reference %s with %s: %s", path, spec.facade_type.__name__, exc)
             return None
 
         self._resolved_documents[cache_key] = resolved

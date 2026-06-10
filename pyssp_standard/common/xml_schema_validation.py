@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import lru_cache
 from pathlib import Path
 
 from lxml import etree
@@ -15,13 +16,19 @@ def resolve_schema_path(*parts: str) -> Path:
     return schema_path
 
 
+@lru_cache(maxsize=None)
+def _compile_schema(schema_path: Path) -> etree.XMLSchema:
+    """Parse and compile an XSD schema, cached by path."""
+    return etree.XMLSchema(etree.parse(str(schema_path)))
+
+
 class XmlSchemaValidator:
     """Shared XSD-backed XML validator."""
 
     def __init__(self, schema_path: Path, *, error_prefix: str):
         self.schema_path = schema_path
         self.error_prefix = error_prefix
-        self._schema = etree.XMLSchema(etree.parse(str(self.schema_path)))
+        self._schema = _compile_schema(schema_path)
 
     def validate_xml(self, xml_text: str) -> None:
         document = etree.fromstring(xml_text.encode("utf-8"))

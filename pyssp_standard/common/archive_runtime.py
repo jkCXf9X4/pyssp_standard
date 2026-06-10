@@ -10,7 +10,14 @@ from pyssp_standard.common.directory_runtime import DirectoryRuntime
 
 
 class ArchiveRuntime:
-    """Shared archive-layer helper for .ssp and .fmu zip containers."""
+    """Shared archive-layer helper for .ssp and .fmu zip containers.
+
+    This class delegates all runtime operations to an inner DirectoryRuntime
+    instance.  Every public DirectoryRuntime method has a matching delegate
+    in ArchiveRuntime.  The only independent logic is _commit() (writes the
+    temp directory back to a zip archive) and the __enter__ / __exit__
+    orchestration (extract on open, commit + cleanup on close).
+    """
 
     def __init__(self, path: str | Path, mode: str = "r", fixed_timestamp: tuple[int, int, int, int, int, int] | None = None):
         self.path = Path(path)
@@ -32,7 +39,7 @@ class ArchiveRuntime:
 
         if self.mode in {"r", "a"} and self.path.exists() and self.path.stat().st_size > 0:
             with zipfile.ZipFile(self.path, "r") as archive:
-                archive.extractall(self._directory_runtime._root)
+                archive.extractall(self._directory_runtime.root)
 
         return self
 
@@ -74,9 +81,42 @@ class ArchiveRuntime:
 
 
 def create_runtime(
-    path: str | Path, mode: str = "r", fixed_timestamp: tuple[int, int, int, int, int, int] | None = None
+    path: str | Path,
+    mode: str = "r",
+    fixed_timestamp: tuple[int, int, int, int, int, int] | None = None,
+    runtime_type: str = "auto",
 ) -> DirectoryRuntime | ArchiveRuntime:
+    """Create a DirectoryRuntime or ArchiveRuntime for *path*.
+
+    The decision tree when *runtime_type* is ``"auto"`` (the default):
+
+    1. If *path* is an existing directory → ``DirectoryRuntime``.
+    2. If *path* exists (file) → ``ArchiveRuntime``.
+    3. If *path* does not exist but has a ``.ssp`` or ``.fmu`` suffix
+       → ``ArchiveRuntime`` (assumed archive path for write mode).
+    4. Otherwise → ``DirectoryRuntime`` (assumed directory path for write mode).
+
+    When *runtime_type* is ``"directory"`` or ``"archive"`` the decision is
+    explicit, skipping the heuristic entirely.
+
+    Args:
+        path: Filesystem path to the SSP/FMU artefact.
+        mode: Open mode (``"r"``, ``"w"``, ``"a"``).
+        fixed_timestamp: Optional fixed timestamp for archive entries
+            (only meaningful for ``ArchiveRuntime``).
+        runtime_type: ``"auto"`` (default), ``"directory"``, or ``"archive"``.
+
+    Returns:
+        Either a ``DirectoryRuntime`` or an ``ArchiveRuntime``.
+    """
     resolved_path = Path(path)
+
+    if runtime_type == "directory":
+        return DirectoryRuntime(resolved_path, mode)
+    if runtime_type == "archive":
+        return ArchiveRuntime(resolved_path, mode, fixed_timestamp=fixed_timestamp)
+
+    # "auto" — original heuristic
     if resolved_path.is_dir():
         return DirectoryRuntime(resolved_path, mode)
     if resolved_path.exists():

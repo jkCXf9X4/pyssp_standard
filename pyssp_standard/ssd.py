@@ -4,7 +4,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Mapping
 
-from pyssp_standard.standard.ssp1.codec.ssd_codec import Ssp1SsdCodec
 from pyssp_standard.standard.ssp1.operations.ssd_parameters import extend_component_parametersets
 from pyssp_standard.standard.ssp1.model.ssd_model import (
     Ssd1Component,
@@ -15,7 +14,6 @@ from pyssp_standard.standard.ssp1.model.ssd_model import (
     Ssd1SystemStructureDescription,
     Ssd1System,
 )
-from pyssp_standard.standard.ssp1.validation import Ssp1SsdValidator
 from pyssp_standard.common.xml_document import XmlDocument
 
 from pyssp_standard.standard.ssp1.model.ssc_model import Ssp1DocumentMetadata
@@ -39,8 +37,7 @@ class SSD(XmlDocument[Ssd1SystemStructureDescription]):
 
     def __init__(self, path: str | Path, mode: str = "r"):
         super().__init__(path, mode)
-        self._codec = Ssp1SsdCodec()
-        self._validator = Ssp1SsdValidator()
+        self._codec, self._validator = self.get_codec_and_validator("SSP", "SSD", version="1.0")
 
     def _create_document(self) -> Ssd1SystemStructureDescription:
         return Ssd1SystemStructureDescription(name=self.path.stem or "system", version="1.0", system=Ssd1System(name="system"))

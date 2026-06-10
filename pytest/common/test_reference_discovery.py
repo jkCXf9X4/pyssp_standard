@@ -9,6 +9,19 @@ from pyssp_standard.common.document_runtime import ExternalReferenceSpec
 from pyssp_standard.common.reference_discovery import discover_external_references
 
 
+class _MockFacade:
+    """Context-managed mock facade for test specs."""
+    def __init__(self, path, mode="r"):
+        pass
+    def __enter__(self):
+        return self
+    def __exit__(self, *args):
+        return False
+    @property
+    def xml(self):
+        return None
+
+
 @dataclass
 class _LeafSpec:
     """A dataclass that matches an ExternalReferenceSpec."""
@@ -25,7 +38,7 @@ LEAF_SPEC = ExternalReferenceSpec(
     owner_type=_LeafSpec,
     source_attr="source",
     document_attr="other_attr",
-    facade_type=object,
+    facade_type=_MockFacade,
 )
 
 
@@ -80,12 +93,13 @@ class TestDiscoverExternalReferences:
         @dataclass
         class _OtherSpec:
             path: str | None = None
+            data: str | None = None
 
         other_spec = ExternalReferenceSpec(
             owner_type=_OtherSpec,
             source_attr="path",
             document_attr="data",
-            facade_type=object,
+            facade_type=_MockFacade,
         )
         leaf = _LeafSpec(source="a.xml")
         other = _OtherSpec(path="b.xml")
