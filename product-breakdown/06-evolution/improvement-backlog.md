@@ -4,11 +4,6 @@
 > architectural, documentation, and testing improvements identified during
 > exploratory analysis.
 >
-> **Workflow:** Each approved candidate triggers a new request that runs the
-> full guarded workflow (planner → discovery → contract → architecture →
-> lessons → packet → builder → verifier → review → gate → reporter).
->
-> **Last updated:** 2026-06-08 (IMP-020/021/022 marked done per ALIGN-001; added IMP-023–IMP-027 candidates)
 
 ---
 
@@ -17,9 +12,9 @@
 | Priority | Open | In Progress | Done | Total |
 |----------|------|-------------|------|-------|
 | High     | 2    | 0           | 6    | 8     |
-| Medium   | 2    | 0           | 4    | 6     |
+| Medium   | 2    | 0           | 5    | 7     |
 | Low      | 2    | 0           | 6    | 8     |
-| **Total**| **6** | **0**       | **16**| **22**|
+| **Total**| **6** | **0**       | **17**| **23**|
 
 ---
 
@@ -49,6 +44,7 @@
 | IMP-020 | FMI2 model field type corrections (value_reference, start, unit, ModelStructure) | High | Domain Model / Codec (FMI2) | done |
 | IMP-021 | FMI2 model metadata completeness (description, author, version, typed capabilities) | Medium | Domain Model / Codec (FMI2) | done |
 | IMP-022 | Deterministic ZIP timestamps for reproducible archive builds | Low | Archive | done |
+| IMP-028 | Formalize Reproducibility as a Non-Functional Requirement (NFR-001 / QA-001) | Medium | Archive (core), Quality Attributes (cross-cutting) | done |
 
 ---
 

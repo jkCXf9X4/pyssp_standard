@@ -4,15 +4,22 @@ from datetime import datetime
 from pathlib import Path
 
 from pyssp_standard.md import ModelDescription
+from pyssp_standard.common.archive import FMI_EPOCH
 from pyssp_standard.common.archive_runtime import create_runtime
 from pyssp_standard.ssp import SSP
 
 
 class FMU:
-    def __init__(self, path: str | Path, mode: str = "r"):
+    def __init__(
+        self,
+        path: str | Path,
+        mode: str = "r",
+        fixed_timestamp: tuple[int, int, int, int, int, int] = FMI_EPOCH,
+    ):
         self.path = Path(path)
         self.mode = mode
-        self.runtime = create_runtime(self.path, mode)
+        self.fixed_timestamp = fixed_timestamp
+        self.runtime = create_runtime(self.path, mode, fixed_timestamp=fixed_timestamp)
         self._model_description: "ModelDescription" | None = None
 
     def __enter__(self) -> "FMU":
@@ -44,9 +51,10 @@ class FMU:
         model_description: str | Path,
         binaries: dict[str, str | Path] | None = None,
         resources: list[str | Path] | None = None,
+        fixed_timestamp: tuple[int, int, int, int, int, int] = FMI_EPOCH,
     ) -> Path:
         path = Path(path)
-        with cls(path, mode="w") as fmu:
+        with cls(path, mode="w", fixed_timestamp=fixed_timestamp) as fmu:
             fmu.add_model_description(model_description)
             for platform, binary in (binaries or {}).items():
                 fmu.add_binary(binary, platform=platform)
@@ -99,7 +107,7 @@ class FMU:
         with self.model_description as md:
             resolved_implementation = implementation or md.xml.interface_type or "ModelExchange"
 
-        with SSP(path, mode="w") as ssp:
+        with SSP(path, mode="w", fixed_timestamp=self.fixed_timestamp) as ssp:
             ssp.add_fmu(
                 component_name=component_name,
                 fmu_path=self.path,

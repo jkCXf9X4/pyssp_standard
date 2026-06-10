@@ -73,12 +73,14 @@ class ArchiveRuntime:
         package_archive(self.root, self.path, recursive=True, fixed_timestamp=self._fixed_timestamp)
 
 
-def create_runtime(path: str | Path, mode: str = "r") -> DirectoryRuntime | ArchiveRuntime:
+def create_runtime(
+    path: str | Path, mode: str = "r", fixed_timestamp: tuple[int, int, int, int, int, int] | None = None
+) -> DirectoryRuntime | ArchiveRuntime:
     resolved_path = Path(path)
     if resolved_path.is_dir():
         return DirectoryRuntime(resolved_path, mode)
     if resolved_path.exists():
-        return ArchiveRuntime(resolved_path, mode)
+        return ArchiveRuntime(resolved_path, mode, fixed_timestamp=fixed_timestamp)
     if resolved_path.suffix.lower() in {".ssp", ".fmu"}:
-        return ArchiveRuntime(resolved_path, mode)
+        return ArchiveRuntime(resolved_path, mode, fixed_timestamp=fixed_timestamp)
     return DirectoryRuntime(resolved_path, mode)

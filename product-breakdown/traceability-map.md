@@ -69,6 +69,26 @@ INT-003 Ensure SSP artifacts are valid
 | TG-4 | SSP2 and FMI3 skeletons traced but not implemented | 06-evolution (G1, G2) |
 | TG-5 | No performance or scalability requirements documented | 00-intent (constraints) |
 
+### Reproducibility {#nfr-001} {#qa-001}
+
+```text
+INT-002 Reliable inspection / extraction of FMU artifacts
+  -> CAP-004 FMU archive read + package as SSP
+    -> NFR-001 Reproducible Archive Build
+      -> QA-001 Reproducibility
+        -> AD-001 Archive layer abstraction
+          -> impl: pyssp_standard/common/archive.py (FMI_EPOCH, sorted(), ZIP_DEFLATED)
+            -> impl: pyssp_standard/fmu.py (fixed_timestamp defaults)
+            -> impl: pyssp_standard/ssp.py (fixed_timestamp defaults)
+            -> impl: pyssp_standard/common/archive_runtime.py (fixed_timestamp threading)
+            -> impl: pyssp_standard/common/datetime_utils.py (epoch default)
+              -> AC-DET-001: pytest/fmi2/archive/test_fmu.py::test_fmu_create_deterministic
+              -> AC-DET-002: pytest/ssp1/archive/test_ssp_deterministic.py::test_ssp_create_deterministic
+              -> AC-DET-003: pytest/fmi2/archive/test_fmu_package_deterministic.py::test_fmu_package_as_ssp_deterministic
+              -> AC-DET-004: pytest/ssp1/archive/test_ssp_deterministic.py::test_ssp_add_resource_deterministic
+              -> AC-DET-005: pytest/common/test_generation_datetime_stability.py
+```
+
 ## Related
 
 - **Full traceability matrix:** `04-verification/traceability-matrix.md` (proposed)

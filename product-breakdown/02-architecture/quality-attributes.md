@@ -9,6 +9,7 @@
 |-----------|--------|----------|
 | **Layered separation** | Each layer owns one concern (archive, codec, model, validation, orchestration, public API) | `02-architecture/layer-rules.md` — per-layer rules |
 | **Testability** | Codecs, models, validators, facades each testable in isolation | `pytest/` test tree mirrors the layer structure |
+| **Reproducibility** {#qa-001} | Generated FMU/SSP artifacts are byte-identical from identical specification files and tool version | `04-verification/acceptance-criteria.md` — AC-DET-001–005 |
 | **Round-trip preservation** | Read-modify-write preserves element order, annotations, extensions | `04-verification/acceptance-criteria.md` — round-trip criteria |
 | **Library simplicity** | Minimal external dependencies, standard library for XML and archives | All codec modules use `xml.etree.ElementTree`, archive uses `zipfile` |
 | **Archive/directory transparency** | Same workflow for `.ssp` archives and unpacked directories | `common/archive_runtime.py`, `common/directory_runtime.py` share interface |

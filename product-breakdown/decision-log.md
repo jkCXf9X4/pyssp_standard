@@ -23,6 +23,7 @@ that should be formalized as separate decision files.*
 | VD-001 | Compliance check is explicit, not automatic (implicit) | Verification | Explicit | `04-verification/acceptance-criteria.md` | `common/xml_document.py` |
 | PD-002 | Drop round-trip stability from IMP-012; defer codec fix to backlog | Product | Accepted | `06-evolution/decisions/DEC-IMP012-R1-001.md` | `pytest/fmi2/codec/test_model_description_xml_codec.py`, `06-evolution/improvement-backlog.md` |
 | **IMD-001** | **set_generation_date_and_time placement and scope** | **Implementation** | **Active** | **`03-implementation/decisions/IMD-001-set-generation-date-time.md`** | **`pyssp_standard/common/datetime_utils.py`, `pyssp_standard/ssd.py`, `ssv.py`, `ssb.py`, `ssm.py`, `srmd.py`, `md.py`, `ssp.py`, `fmu.py`** |
+| **DEC-IMP028-R1-001** | **Reproducible Archive Builds** | **Evolution** | **Active** | **`06-evolution/decisions/DEC-IMP028-R1-001.md`** | **`pyssp_standard/common/archive.py`, `fmu.py`, `ssp.py`, `archive_runtime.py`, `datetime_utils.py`; `04-verification/acceptance-criteria.md` (AC-DET-001–005); `02-architecture/quality-attributes.md` (Reproducibility)** |
 
 ## Open Decisions
 

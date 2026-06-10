@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import hashlib
 import shutil
 import zipfile
 from pathlib import Path
 
 import pytest
 
+from pyssp_standard.common.archive import FMI_EPOCH
 from pyssp_standard.fmu import FMU
 from pyssp_standard.ssp import SSP
 
@@ -296,3 +298,38 @@ def test_fmu_create_returns_path(tmp_path):
 
     assert isinstance(result, Path)
     assert result == fmu_path
+
+
+def test_fmu_create_deterministic(tmp_path):
+    """Two FMU.create() calls with identical inputs produce identical SHA256 hashes."""
+    md_file = tmp_path / "modelDescription.xml"
+    md_file.write_text(_MINIMAL_MD_XML)
+    binary_file = tmp_path / "engine.so"
+    binary_file.write_text("binary content")
+    resource_file = tmp_path / "config.json"
+    resource_file.write_text('{"key": "value"}')
+    binaries = {"linux64": binary_file}
+    resources = [resource_file]
+
+    fmu_path1 = tmp_path / "deterministic_1.fmu"
+    fmu_path2 = tmp_path / "deterministic_2.fmu"
+
+    FMU.create(
+        fmu_path1,
+        md_file,
+        binaries=binaries,
+        resources=resources,
+        fixed_timestamp=FMI_EPOCH,
+    )
+    FMU.create(
+        fmu_path2,
+        md_file,
+        binaries=binaries,
+        resources=resources,
+        fixed_timestamp=FMI_EPOCH,
+    )
+
+    hash1 = hashlib.sha256(fmu_path1.read_bytes()).hexdigest()
+    hash2 = hashlib.sha256(fmu_path2.read_bytes()).hexdigest()
+
+    assert hash1 == hash2

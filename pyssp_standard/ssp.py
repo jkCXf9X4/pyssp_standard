@@ -23,7 +23,7 @@ from pyssp_standard.standard.ssp1.operations.model_description_to_ssd import (
 from pyssp_standard.ssd import ParameterBinding, SSD
 from pyssp_standard.common.document_runtime import DocumentRuntime
 from pyssp_standard.common.reference_specs import EXTERNAL_REFERENCE_SPECS
-from pyssp_standard.common.archive import copy_resource_directory
+from pyssp_standard.common.archive import FMI_EPOCH, copy_resource_directory
 from pyssp_standard.common.archive_runtime import (
     DirectoryRuntime,
     create_runtime,
@@ -32,11 +32,16 @@ from pyssp_standard.common.archive_runtime import (
 
 
 class SSP:
-    def __init__(self, path: str | Path, mode: str = "a"):
+    def __init__(
+        self,
+        path: str | Path,
+        mode: str = "a",
+        fixed_timestamp: tuple[int, int, int, int, int, int] = FMI_EPOCH,
+    ):
         self.path = Path(path)
         self.mode = mode
         self._runtime: DirectoryRuntime | ArchiveRuntime = create_runtime(
-            self.path, mode
+            self.path, mode, fixed_timestamp=fixed_timestamp
         )
 
     def __enter__(self) -> "SSP":
